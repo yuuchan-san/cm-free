@@ -526,7 +526,7 @@
             ratingValue = constant - 3 * (975000 - score) / 250000;
         }
 
-        return Math.floor(ratingValue * 100) / 100;
+        return Math.rounddown(ratingValue * 100) / 100;
     };
 
     const getRankInfo = (score) => {
@@ -1266,4 +1266,5 @@
     }
 
 })();
+
 
