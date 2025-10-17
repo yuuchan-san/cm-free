@@ -513,18 +513,19 @@ const calculateRating = (score, constant) => {
     } else if (score >= 1007500) {
         rating = constant + 2.00;
     } else if (score >= 1005000) {
-        rating = constant + 1.50 + (score - 1005000) * 0.002;
+        rating = constant + 1.50 + (score - 1005000) * 0.0002;
     } else if (score >= 1000000) {
-        rating = constant + 1.00 + (score - 1000000) * 0.001;
+        rating = constant + 1.00 + (score - 1000000) * 0.0001;
     } else if (score >= 975000) {
         rating = constant + (score - 975000) / 25000;
     } else {
         rating = constant - 3 * (975000 - score) / 250000;
     }
 
-    // math floor
+    // nyan?
     return Math.floor(rating * 100) / 100;
-}
+};
+
 
     const getRankInfo = (score) => {
         if (score >= 1009000) return { rank: "SSS+", color: "#FFD700" };
@@ -1263,6 +1264,7 @@ const calculateRating = (score, constant) => {
     }
 
 })();
+
 
 
 
