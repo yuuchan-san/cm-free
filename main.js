@@ -499,7 +499,7 @@
             ratingValue = constant - 5.0 + (score - 900000) / 25000 * 2.0;
         }
 
-        return Math.round(ratingValue * 100) / 100;
+        return Math.rounddown(ratingValue * 100) / 100;
     };:*/
     const calculateRating = (score, constant) => {
         if (!constant) return 0.0;
@@ -1054,7 +1054,7 @@
         const firstLineY = secondLineY - lineHeight;
 
         ctx.fillText('非公式ジェネレーターによって生成されました', footerX, firstLineY);
-        ctx.fillText('https://chunithm.fun', footerX, secondLineY);
+        ctx.fillText('(forked from take@TakeTakaaway)', footerX, secondLineY);
 
         // --- 結果表示 ---
         updateMessage("画像を生成中...");
@@ -1266,3 +1266,4 @@
     }
 
 })();
+
