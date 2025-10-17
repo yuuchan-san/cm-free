@@ -522,7 +522,6 @@ const calculateRating = (score, constant) => {
         rating = constant - 3 * (975000 - score) / 250000;
     }
 
-    #多分治った？かにゃ
     const internal = Math.floor(rating * 10000) / 10000;
     return Math.floor(internal * 100) / 100;
 };
@@ -1266,6 +1265,7 @@ const calculateRating = (score, constant) => {
     }
 
 })();
+
 
 
 
