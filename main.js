@@ -499,35 +499,32 @@
             ratingValue = constant - 5.0 + (score - 900000) / 25000 * 2.0;
         }
 
-        return Math.rounddown(ratingValue * 100) / 100;
+        return Math.ceil(ratingValue * 100) / 100;
     };:*/
-    const calculateRating = (score, constant) => {
-        if (!constant) return 0.0;
-        constant = parseFloat(constant);
+const calculateRating = (score, constant) => {
+    if (!constant || isNaN(score)) return 0.00;
+    constant = parseFloat(constant);
+    score = parseInt(score);
 
-        let ratingValue = 0.0;
+    let rating = 0;
 
-        if (score >= 1009000) {
-            ratingValue = constant + 2.15;
-        }
-        else if (score >= 1007500) {
-            ratingValue = constant + 2.0;
-        }
-        else if (score >= 1005000) {
-            ratingValue = constant + 1.5 + (score - 1005000) * 0.0002;
-        }
-        else if (score >= 1000000) {
-            ratingValue = constant + 1.0 + (score - 1000000) * 0.0001;
-        }
-        else if (score >= 975000) {
-            ratingValue = constant + (score - 975000) / 25000;
-        }
-        else {
-            ratingValue = constant - 3 * (975000 - score) / 250000;
-        }
+    if (score >= 1009000) {
+        rating = constant + 2.15;
+    } else if (score >= 1007500) {
+        rating = constant + 2.00;
+    } else if (score >= 1005000) {
+        rating = constant + 1.50 + (score - 1005000) * 0.002;
+    } else if (score >= 1000000) {
+        rating = constant + 1.00 + (score - 1000000) * 0.001;
+    } else if (score >= 975000) {
+        rating = constant + (score - 975000) / 25000;
+    } else {
+        rating = constant - 3 * (975000 - score) / 250000;
+    }
 
-        return Math.rounddown(ratingValue * 100) / 100;
-    };
+    // math floor
+    return Math.floor(rating * 100) / 100;
+}
 
     const getRankInfo = (score) => {
         if (score >= 1009000) return { rank: "SSS+", color: "#FFD700" };
@@ -1266,5 +1263,6 @@
     }
 
 })();
+
 
 
