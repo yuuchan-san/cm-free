@@ -502,30 +502,29 @@
         return Math.ceil(ratingValue * 100) / 100;
     };:*/
 const calculateRating = (score, constant) => {
-    if (!constant || isNaN(score)) return 0.00;
-    constant = parseFloat(constant);
-    score = parseInt(score);
+    // 型補正
+    score = Number(score);
+    constant = Number(constant);
+    if (isNaN(score) || isNaN(constant)) return 0.00;
 
-    let rating = 0;
+    let r = 0;
 
     if (score >= 1009000) {
-        rating = constant + 2.15;
+        r = constant + 2.15;
     } else if (score >= 1007500) {
-        rating = constant + 2.00;
+        r = constant + 2.00 + (score - 1007500) * 0.0001;
     } else if (score >= 1005000) {
-        rating = constant + 1.50 + (score - 1005000) * 0.00002; // ← 修正点
+        r = constant + 1.50 + (score - 1005000) * 0.0002;
     } else if (score >= 1000000) {
-        rating = constant + 1.00 + (score - 1000000) * 0.00001; // ← 修正点
+        r = constant + 1.00 + (score - 1000000) * 0.0001;
     } else if (score >= 975000) {
-        rating = constant + (score - 975000) / 25000;
+        r = constant + (score - 975000) / 25000;
     } else {
-        rating = constant - 3 * (975000 - score) / 250000;
+        r = constant - 3 * (975000 - score) / 250000;
     }
-
-    const internal = Math.floor(rating * 10000) / 10000;
+    const internal = Math.floor(r * 10000) / 10000;
     return Math.floor(internal * 100) / 100;
 };
-
 
 
     const getRankInfo = (score) => {
@@ -1265,6 +1264,7 @@ const calculateRating = (score, constant) => {
     }
 
 })();
+
 
 
 
