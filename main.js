@@ -513,18 +513,20 @@ const calculateRating = (score, constant) => {
     } else if (score >= 1007500) {
         rating = constant + 2.00;
     } else if (score >= 1005000) {
-        rating = constant + 1.50 + (score - 1005000) * 0.0002;
+        rating = constant + 1.50 + (score - 1005000) * 0.00002; // ← 修正点
     } else if (score >= 1000000) {
-        rating = constant + 1.00 + (score - 1000000) * 0.0001;
+        rating = constant + 1.00 + (score - 1000000) * 0.00001; // ← 修正点
     } else if (score >= 975000) {
         rating = constant + (score - 975000) / 25000;
     } else {
         rating = constant - 3 * (975000 - score) / 250000;
     }
 
-    // nyan?
-    return Math.floor(rating * 100) / 100;
+    #多分治った？かにゃ
+    const internal = Math.floor(rating * 10000) / 10000;
+    return Math.floor(internal * 100) / 100;
 };
+
 
 
     const getRankInfo = (score) => {
@@ -1264,6 +1266,7 @@ const calculateRating = (score, constant) => {
     }
 
 })();
+
 
 
 
