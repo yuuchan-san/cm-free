@@ -1265,8 +1265,33 @@ const calculateRating = (score, constant) => {
 
 })();
 
+document.addEventListener("DOMContentLoaded", () => {
+    const freeBtn = document.getElementById("free-mode-btn");
+    if (!freeBtn) return;
 
+    let clickCount = 0;
+    let unlocked = false;
 
+    freeBtn.classList.add("disabled-look");
+    freeBtn.disabled = true;
 
+    freeBtn.addEventListener("click", (e) => {
+        if (unlocked) return;
 
+        e.preventDefault();
+        clickCount++;
 
+        if (clickCount >= 10) {
+            unlocked = true;
+            freeBtn.disabled = false;
+            freeBtn.classList.remove("disabled-look");
+            freeBtn.textContent = "🎉 無料モード 解禁！";
+            freeBtn.style.transition = "all 0.3s ease";
+            freeBtn.style.transform = "scale(1.1)";
+            setTimeout(() => freeBtn.style.transform = "", 300);
+        } else {
+            console.log(`あと${10 - clickCount}回クリックで解禁！`);
+            freeBtn.textContent = `あと${10 - clickCount}回で解禁`;
+        }
+    });
+});
