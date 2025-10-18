@@ -59,7 +59,7 @@
         return;
     }
 
-const addGlobalStyles = () => {
+    const addGlobalStyles = () => {
         const style = document.createElement('style');
         style.textContent = `
             @keyframes fadeIn {
@@ -1355,5 +1355,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
