@@ -159,17 +159,10 @@
             scanModeLabel.textContent = '動作モード';
             scanModeLabel.style.cssText = 'display: block; font-size: 18px; font-weight: bold; color: #D0D0D0; margin-bottom: 15px;';
             scanModeSection.appendChild(scanModeLabel);
-
-            scanModeButtonsContainer.style.cssText = 'display: flex; justify-content: center; gap: 20px;';
-            const constThresholdSection = document.createElement('div');
-            constThresholdSection.style.cssText = 'margin-top: 25px; display: none;';
             const scanModeButtonsContainer = document.createElement('div');
             scanModeButtonsContainer.style.cssText = 'display: flex; justify-content: center; gap: 20px;';
             const constThresholdSection = document.createElement('div');
             constThresholdSection.style.cssText = 'margin-top: 25px; display: none;';
-
-            let freeModeClickCount = 0;
-            let freeModeUnlocked = false;
 
             const createScanModeButton = (text, scanMode) => {
                 const button = document.createElement('button');
@@ -180,39 +173,15 @@
                     background-color: #333; color: white; border: 2px solid #555; border-radius: 8px;
                     transition: all 0.2s ease-out;
                 `;
-                
-                if (scanMode === 'free') {
-                    button.style.opacity = '0.4';
-                    button.style.cursor = 'not-allowed';
-                }
-                
                 button.onclick = () => {
-                    if (scanMode === 'free' && !freeModeUnlocked) {
-                        freeModeClickCount++;
-                        const remaining = 10 - freeModeClickCount;
-                        
-                        if (freeModeClickCount >= 10) {
-                            freeModeUnlocked = true;
-                            button.style.opacity = '1';
-                            button.style.cursor = 'pointer';
-                            button.innerHTML = text;
-                            selectedScanMode = scanMode;
-                            updateScanModeButtons();
-                            checkIfReady();
-                        } else {
-                            button.style.transform = 'scale(0.95)';
-                            setTimeout(() => { button.style.transform = 'scale(1)'; }, 100);
-                            button.innerHTML = text + `<br><small style="color: #FFC107;">あと${remaining}回クリック</small>`;
-                        }
-                        return;
-                    }
-                    
                     selectedScanMode = scanMode;
                     updateScanModeButtons();
                     checkIfReady();
                 };
                 return button;
             };
+
+            const updateScanModeButtons = () => {
                  document.querySelectorAll('button[data-scan-mode]').forEach(btn => {
                     const isSelected = btn.dataset.scanMode === selectedScanMode;
                     btn.style.backgroundColor = isSelected ? '#4A90E2' : '#333';
@@ -1295,8 +1264,6 @@ const calculateRating = (score, constant) => {
     }
 
 })();
-
-
 
 
 
