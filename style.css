@@ -205,4 +205,6 @@ li {
     opacity: 0.5;
     cursor: not-allowed;
     filter: grayscale(60%);
+    transition: all 0.3s ease;
 }
+
