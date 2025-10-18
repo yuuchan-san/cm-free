@@ -208,7 +208,7 @@
                             };
                             
                             const unlockMessage = document.createElement('div');
-                            unlockMessage.textContent = '🎉 無料モード解除！';
+                            unlockMessage.textContent = '🔓';
                             unlockMessage.style.cssText = `
                                 position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
                                 background: rgba(76, 175, 80, 0.9); color: white; padding: 5px 10px;
@@ -1355,6 +1355,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
 
