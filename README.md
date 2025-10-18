@@ -1,5 +1,5 @@
 # cm-free
-## It's a fork that was made for me.
+## It's a fork
 このリポジトリのベ枠ジェネレータを使用して何らかの損害を受けても、私は責任を負いません
 
 -----
