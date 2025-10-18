@@ -1272,10 +1272,21 @@ document.addEventListener("DOMContentLoaded", () => {
     let clickCount = 0;
     let unlocked = false;
 
-    freeBtn.classList.add("disabled-look");
-    freeBtn.disabled = true;
+    // 元のイベントを退避
+    const originalEvents = freeBtn.cloneNode(true);
+    const newBtn = freeBtn.cloneNode(true);
+    freeBtn.replaceWith(newBtn);
 
-    freeBtn.addEventListener("click", (e) => {
+    const btn = document.getElementById("free-mode-btn");
+
+    // 無効風のスタイル適用
+    btn.classList.add("disabled-look");
+    btn.style.pointerEvents = "auto"; // グレーでもクリックカウントは取る
+    btn.style.userSelect = "none";
+    btn.style.opacity = "0.5";
+    btn.style.cursor = "not-allowed";
+
+    btn.addEventListener("click", (e) => {
         if (unlocked) return;
 
         e.preventDefault();
@@ -1283,15 +1294,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (clickCount >= 10) {
             unlocked = true;
-            freeBtn.disabled = false;
-            freeBtn.classList.remove("disabled-look");
-            freeBtn.textContent = "🎉 無料モード 解禁！";
-            freeBtn.style.transition = "all 0.3s ease";
-            freeBtn.style.transform = "scale(1.1)";
-            setTimeout(() => freeBtn.style.transform = "", 300);
+            btn.style.opacity = "1.0";
+            btn.style.cursor = "pointer";
+            btn.classList.remove("disabled-look");
+            btn.textContent = "🎉 無料モード 解禁！";
+
+            // 元のボタンを復活させる（イベント含む）
+            btn.replaceWith(originalEvents);
         } else {
-            console.log(`あと${10 - clickCount}回クリックで解禁！`);
-            freeBtn.textContent = `あと${10 - clickCount}回で解禁`;
+            btn.textContent = `あと${10 - clickCount}回で解禁`;
         }
     });
 });
+
