@@ -1100,8 +1100,8 @@ const calculateRating = (score, constant) => {
         const secondLineY = canvas.height - PADDING + 10;
         const firstLineY = secondLineY - lineHeight;
 
-        ctx.fillText('非公式ジェネレーターによって生成されました', footerX, firstLineY);
-        ctx.fillText('(forked from take@TakeTakaaway)', footerX, secondLineY);
+        ctx.fillText('この画像は非公式ジェネレーターによって生成されました', footerX, firstLineY);
+        ctx.fillText('yuuchan-san.github.io/cm-free [Forked from X@TakeTakaAway]', footerX, secondLineY);
 
         // --- 結果表示 ---
         updateMessage("画像を生成中...");
@@ -1355,6 +1355,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
 
