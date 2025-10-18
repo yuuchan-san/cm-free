@@ -59,7 +59,7 @@
         return;
     }
 
-    const addGlobalStyles = () => {
+const addGlobalStyles = () => {
         const style = document.createElement('style');
         style.textContent = `
             @keyframes fadeIn {
@@ -75,6 +75,10 @@
                 0% { background-position: 0% 50%; }
                 50% { background-position: 100% 50%; }
                 100% { background-position: 0% 50%; }
+            }
+            @keyframes fadeOut {
+                0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
             }
         `;
         document.head.appendChild(style);
@@ -163,21 +167,66 @@
             scanModeButtonsContainer.style.cssText = 'display: flex; justify-content: center; gap: 20px;';
             const constThresholdSection = document.createElement('div');
             constThresholdSection.style.cssText = 'margin-top: 25px; display: none;';
+            let freeModeClickCount = 0;
+            const REQUIRED_CLICKS = 10;
 
             const createScanModeButton = (text, scanMode) => {
                 const button = document.createElement('button');
                 button.innerHTML = text;
                 button.dataset.scanMode = scanMode;
+                const isFreeModeButton = scanMode === 'free';
                 button.style.cssText = `
-                    flex: 1; padding: 15px; font-size: 16px; font-weight: bold; cursor: pointer;
-                    background-color: #333; color: white; border: 2px solid #555; border-radius: 8px;
-                    transition: all 0.2s ease-out;
+                    flex: 1; padding: 15px; font-size: 16px; font-weight: bold; cursor: ${isFreeModeButton ? 'not-allowed' : 'pointer'};
+                    background-color: ${isFreeModeButton ? '#222' : '#333'}; color: ${isFreeModeButton ? '#666' : 'white'}; 
+                    border: 2px solid ${isFreeModeButton ? '#333' : '#555'}; border-radius: 8px;
+                    transition: all 0.2s ease-out; opacity: ${isFreeModeButton ? '0.5' : '1'}; position: relative;
                 `;
-                button.onclick = () => {
-                    selectedScanMode = scanMode;
-                    updateScanModeButtons();
-                    checkIfReady();
-                };
+                
+                if (isFreeModeButton) {
+                    const lockIcon = document.createElement('span');
+                    lockIcon.textContent = '🔒';
+                    lockIcon.style.cssText = 'position: absolute; top: 5px; right: 10px; font-size: 20px;';
+                    button.appendChild(lockIcon);
+                    
+                    button.onclick = () => {
+                        freeModeClickCount++;
+                        
+                        if (freeModeClickCount < REQUIRED_CLICKS) {
+                            button.style.transform = 'scale(0.95)';
+                            setTimeout(() => button.style.transform = 'scale(1)', 100);
+                        } else {
+                            lockIcon.remove();
+                            button.style.cursor = 'pointer';
+                            button.style.backgroundColor = '#333';
+                            button.style.color = 'white';
+                            button.style.borderColor = '#555';
+                            button.style.opacity = '1';
+                            button.onclick = () => {
+                                selectedScanMode = scanMode;
+                                updateScanModeButtons();
+                                checkIfReady();
+                            };
+                            
+                            const unlockMessage = document.createElement('div');
+                            unlockMessage.textContent = '🎉 無料モード解除！';
+                            unlockMessage.style.cssText = `
+                                position: absolute; top: -30px; left: 50%; transform: translateX(-50%);
+                                background: rgba(76, 175, 80, 0.9); color: white; padding: 5px 10px;
+                                border-radius: 5px; font-size: 14px; white-space: nowrap; font-weight: bold;
+                                animation: fadeOut 2s forwards;
+                            `;
+                            button.style.position = 'relative';
+                            button.appendChild(unlockMessage);
+                            setTimeout(() => unlockMessage.remove(), 2000);
+                        }
+                    };
+                } else {
+                    button.onclick = () => {
+                        selectedScanMode = scanMode;
+                        updateScanModeButtons();
+                        checkIfReady();
+                    };
+                }
                 return button;
             };
 
@@ -1306,4 +1355,5 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
