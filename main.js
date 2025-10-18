@@ -332,8 +332,8 @@
             };
             const minusButton = createControlButton('-');
             minusButton.onclick = () => {
-                if (scrapeDelay > 0) {
-                    scrapeDelay = Math.max(0, scrapeDelay - 0.5);
+                if (scrapeDelay > 1.0) {
+                    scrapeDelay = Math.max(1.0, scrapeDelay - 0.5);
                     delayValueSpan.textContent = scrapeDelay.toFixed(1);
                 }
             };
@@ -1355,6 +1355,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
 
