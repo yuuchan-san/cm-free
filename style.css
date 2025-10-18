@@ -199,8 +199,8 @@ li {
         width: 100%;
         text-align: left;
     }
-
 }
+
 .disabled-look {
     opacity: 0.5;
     cursor: not-allowed;
