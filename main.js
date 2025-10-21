@@ -551,7 +551,6 @@
         return Math.ceil(ratingValue * 100) / 100;
     };:*/
 const calculateRating = (score, constant) => {
-    // 型補正
     score = Number(score);
     constant = Number(constant);
     if (isNaN(score) || isNaN(constant)) return 0.00;
@@ -1392,6 +1391,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
 
