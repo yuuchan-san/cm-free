@@ -551,7 +551,7 @@
         return Math.ceil(ratingValue * 100) / 100;
     };:*/
 const calculateRating = (score, constant) => {
-    // これでようやく治ったかも？
+    // 型補正
     score = Number(score);
     constant = Number(constant);
     if (isNaN(score) || isNaN(constant)) return 0.00;
@@ -586,13 +586,19 @@ const calculateRating = (score, constant) => {
         // A: 譜面定数 - 5.0 + (150点毎に+0.01)
         r = constant - 5.00 + (score - 900000) / 15000;
     } else if (score >= 800000) {
-        // BBB: (譜面定数 - 5.0) / 2 + (2000/(譜面定数-5)点毎に+0.01)
+        // BBB: (譜面定数 - 5.0) / 2 + 加算分
+        // 800,000点時点で (譜面定数 - 5.0) / 2
+        // 2000/(譜面定数-5)点毎に+0.01 = (譜面定数-5)/2000点毎に+0.01
         const base = (constant - 5.0) / 2;
-        const increment = (score - 800000) / ((constant - 5.0) * 200);
+        const pointsPer001 = 2000 / (constant - 5.0);
+        const increment = (score - 800000) / pointsPer001 * 0.01;
         r = base + increment;
     } else if (score >= 500000) {
-        // C: 0 + (6000/(譜面定数-5)点毎に+0.01)
-        const increment = (score - 500000) / ((constant - 5.0) * 600);
+        // C: 0 + 加算分
+        // 500,000点時点で 0
+        // 6000/(譜面定数-5)点毎に+0.01 = (譜面定数-5)/6000点毎に+0.01
+        const pointsPer001 = 6000 / (constant - 5.0);
+        const increment = (score - 500000) / pointsPer001 * 0.01;
         r = increment;
     } else {
         // 500,000未満は0
@@ -1386,6 +1392,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
 
 
 
