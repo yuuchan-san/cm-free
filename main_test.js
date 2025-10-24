@@ -1071,8 +1071,9 @@
             ctx.fillText(title, startX, startY + 45);
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
-
-            list.forEach((song, i) => {
+            
+            for (let i = 0; i < list.length; i++) {
+                const song = list[i];
                 const row = Math.floor(i / cols);
                 const col = i % cols;
                 const x = startX + col * (blockWidth + PADDING);
@@ -1219,7 +1220,7 @@
                 drawDataRow('プレイ回数', song.playCount || 'N/A', current_y);
                 current_y += 32;
                 drawDataRow('RATING', song.rating.toFixed(2), current_y, '#81D4FA', `bold 22px ${FONT_FAMILY}`);
-            });
+            }
         };
 
         if (mode === 'vertical') {
