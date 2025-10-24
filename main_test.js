@@ -1007,15 +1007,23 @@
 
         updateMessage("ジャケット画像を読み込み中...");
         const allSongs = [...bestList, ...recentList];
-        const imagePromises = allSongs.map(song => new Promise(resolve => {
-            if (!song.jacketUrl) { resolve({ ...song, image: null }); return; }
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = () => resolve({ ...song, image: img });
-            img.onerror = () => resolve({ ...song, image: null });
-            img.src = song.jacketUrl.replace('http://', 'https://');
-        }));
-        const songsWithImages = await Promise.all(imagePromises);
+        
+        // 画像を個別に読み込む（元のsongオブジェクトを保持）
+        const loadSongImage = async (song) => {
+            if (!song.jacketUrl) {
+                return { ...song, image: null };
+            }
+            
+            try {
+                const img = await loadImage(song.jacketUrl.replace('http://', 'https://'));
+                return { ...song, image: img };
+            } catch (error) {
+                console.warn(`ジャケット画像読み込み失敗: ${song.title}`, error);
+                return { ...song, image: null };
+            }
+        };
+        
+        const songsWithImages = await Promise.all(allSongs.map(loadSongImage));
 
         const renderSongList = (title, list, startX, startY, cols, blockWidth) => {
             ctx.font = `bold 38px ${FONT_FAMILY}`;
