@@ -1023,8 +1023,13 @@
                 return { ...song, image: null };
             }
         };
-        
-        const songsWithImages = await Promise.all(allSongs.map(loadSongImage));
+            
+        // 新しいコード
+        const songsWithImages = [];
+        for (const song of allSongs) {
+            const songWithImage = await loadSongImage(song);
+            songsWithImages.push(songWithImage);
+        }
 
         const renderSongList = (title, list, startX, startY, cols, blockWidth) => {
             ctx.font = `bold 38px ${FONT_FAMILY}`;
