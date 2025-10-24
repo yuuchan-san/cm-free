@@ -1027,11 +1027,40 @@
             }
         };
             
-        // 新しいコード
+        // 新しいコード - 確実に1枚ずつ順番に読み込む
         const songsWithImages = [];
+        updateMessage("ジャケット画像を読み込み中...");
         for (let i = 0; i < allSongs.length; i++) {
-            const songWithImage = await loadSongImage(allSongs[i], i);
-            songsWithImages.push(songWithImage);
+            const song = allSongs[i];
+            if (!song.jacketUrl) {
+                songsWithImages.push({ ...song, image: null });
+                continue;
+            }
+            
+            try {
+                // 完全にユニークなURLを生成
+                const timestamp = Date.now();
+                const random = Math.random().toString(36).substring(7);
+                const baseUrl = song.jacketUrl.replace('http://', 'https://');
+                const uniqueUrl = `${baseUrl}?_cache=${timestamp}_${random}_${i}_${encodeURIComponent(song.title)}_${song.difficulty}`;
+                
+                // 新しい画像オブジェクトを作成
+                const img = await new Promise((resolve, reject) => {
+                    const image = new Image();
+                    image.crossOrigin = "anonymous";
+                    image.onload = () => resolve(image);
+                    image.onerror = (err) => reject(err);
+                    image.src = uniqueUrl;
+                });
+                
+                songsWithImages.push({ ...song, image: img });
+                
+                // 少し待機してブラウザのキャッシュ処理を確実にする
+                await new Promise(resolve => setTimeout(resolve, 50));
+            } catch (error) {
+                console.warn(`ジャケット画像読み込み失敗: ${song.title} [${song.difficulty}]`, error);
+                songsWithImages.push({ ...song, image: null });
+            }
         }
 
         const renderSongList = (title, list, startX, startY, cols, blockWidth) => {
