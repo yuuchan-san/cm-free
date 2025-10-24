@@ -1007,62 +1007,6 @@
         ctx.stroke();
         ctx.restore();
 
-        updateMessage("ジャケット画像を読み込み中...");
-        const allSongs = [...bestList, ...recentList];
-        
-        const loadSongImage = async (song, uniqueIndex) => {
-            if (!song.jacketUrl) {
-                return { ...song, image: null };
-            }
-            
-            try {
-                // HTTPSに変換し、ユニークなIDを付与
-                const baseUrl = song.jacketUrl.replace('http://', 'https://');
-                const uniqueUrl = `${baseUrl}?idx=${uniqueIndex}&title=${encodeURIComponent(song.title)}&diff=${song.difficulty}`;
-                const img = await loadImage(uniqueUrl);
-                return { ...song, image: img };
-            } catch (error) {
-                console.warn(`ジャケット画像読み込み失敗: ${song.title} [${song.difficulty}]`, error);
-                return { ...song, image: null };
-            }
-        };
-            
-        // 新しいコード - 確実に1枚ずつ順番に読み込む
-        const songsWithImages = [];
-        updateMessage("ジャケット画像を読み込み中...");
-        for (let i = 0; i < allSongs.length; i++) {
-            const song = allSongs[i];
-            if (!song.jacketUrl) {
-                songsWithImages.push({ ...song, image: null });
-                continue;
-            }
-            
-            try {
-                // 完全にユニークなURLを生成
-                const timestamp = Date.now();
-                const random = Math.random().toString(36).substring(7);
-                const baseUrl = song.jacketUrl.replace('http://', 'https://');
-                const uniqueUrl = `${baseUrl}?_cache=${timestamp}_${random}_${i}_${encodeURIComponent(song.title)}_${song.difficulty}`;
-                
-                // 新しい画像オブジェクトを作成
-                const img = await new Promise((resolve, reject) => {
-                    const image = new Image();
-                    image.crossOrigin = "anonymous";
-                    image.onload = () => resolve(image);
-                    image.onerror = (err) => reject(err);
-                    image.src = uniqueUrl;
-                });
-                
-                songsWithImages.push({ ...song, image: img });
-                
-                // 少し待機してブラウザのキャッシュ処理を確実にする
-                await new Promise(resolve => setTimeout(resolve, 50));
-            } catch (error) {
-                console.warn(`ジャケット画像読み込み失敗: ${song.title} [${song.difficulty}]`, error);
-                songsWithImages.push({ ...song, image: null });
-            }
-        }
-
         const renderSongList = async (title, list, startX, startY, cols, blockWidth) => {
             ctx.font = `bold 38px ${FONT_FAMILY}`;
             ctx.fillStyle = '#FFFFFF';
@@ -1226,8 +1170,8 @@
         if (mode === 'vertical') {
             const bestStartY = HEADER_HEIGHT;
             const recentStartY = bestStartY + calcListHeight(bestList, COLS) + CENTER_GAP;
-            await renderSongList("BEST", songsWithImages.slice(0, bestList.length), PADDING, bestStartY, COLS, BLOCK_WIDTH);
-            await renderSongList("NEW", songsWithImages.slice(bestList.length), PADDING, recentStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("BEST", bestList, PADDING, bestStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("NEW", recentList, PADDING, recentStartY, COLS, BLOCK_WIDTH);
         } else {
             const listsStartY = HEADER_HEIGHT;
             const bestStartX = PADDING;
@@ -1419,8 +1363,6 @@
             updateMessage("新曲枠の曲リストを取得中...", 20);
             const recentList = await scrapeRatingList(URL_RATING_RECENT);
             if (isAborted) return;
-
-            const allSongs = [...bestList, ...recentList];
 
             if (useParallel) {
                 // 並列処理モード
