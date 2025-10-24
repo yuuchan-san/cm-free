@@ -1063,7 +1063,7 @@
             }
         }
 
-        const renderSongList = (title, list, startX, startY, cols, blockWidth) => {
+        const renderSongList = async (title, list, startX, startY, cols, blockWidth) => {
             ctx.font = `bold 38px ${FONT_FAMILY}`;
             ctx.fillStyle = '#FFFFFF';
             ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
@@ -1095,20 +1095,44 @@
 
                 const jacket_x = x + (blockWidth - JACKET_SIZE) / 2;
                 const jacket_y = y + 20;
-                if (song.image) {
-                    ctx.save();
-                    drawRoundRect(ctx, jacket_x, jacket_y, JACKET_SIZE, JACKET_SIZE, 10);
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    ctx.clip();
-                    ctx.drawImage(song.image, jacket_x, jacket_y, JACKET_SIZE, JACKET_SIZE);
-                    ctx.restore();
-                } else {
+                
+                // 各曲のジャケットを個別に読み込んで描画
+                const drawJacket = async () => {
+                    if (song.jacketUrl) {
+                        try {
+                            // 毎回新しく画像を読み込む
+                            const uniqueUrl = `${song.jacketUrl.replace('http://', 'https://')}?_=${Date.now()}_${Math.random()}_${song.title}_${song.difficulty}_${i}`;
+                            const img = await new Promise((resolve, reject) => {
+                                const image = new Image();
+                                image.crossOrigin = "anonymous";
+                                image.onload = () => resolve(image);
+                                image.onerror = () => resolve(null);
+                                image.src = uniqueUrl;
+                            });
+                            
+                            if (img) {
+                                ctx.save();
+                                drawRoundRect(ctx, jacket_x, jacket_y, JACKET_SIZE, JACKET_SIZE, 10);
+                                ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                                ctx.lineWidth = 2;
+                                ctx.stroke();
+                                ctx.clip();
+                                ctx.drawImage(img, jacket_x, jacket_y, JACKET_SIZE, JACKET_SIZE);
+                                ctx.restore();
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn('ジャケット描画エラー:', e);
+                        }
+                    }
+                    
+                    // 画像が読み込めなかった場合
                     ctx.fillStyle = '#222';
                     drawRoundRect(ctx, jacket_x, jacket_y, JACKET_SIZE, JACKET_SIZE, 10);
                     ctx.fill();
-                }
+                };
+                
+                await drawJacket();
 
                 const numberText = `#${i + 1}`;
                 ctx.font = `bold 30px ${FONT_FAMILY}`;
@@ -1201,15 +1225,15 @@
         if (mode === 'vertical') {
             const bestStartY = HEADER_HEIGHT;
             const recentStartY = bestStartY + calcListHeight(bestList, COLS) + CENTER_GAP;
-            renderSongList("BEST", songsWithImages.slice(0, bestList.length), PADDING, bestStartY, COLS, BLOCK_WIDTH);
-            renderSongList("NEW", songsWithImages.slice(bestList.length), PADDING, recentStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("BEST", songsWithImages.slice(0, bestList.length), PADDING, bestStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("NEW", songsWithImages.slice(bestList.length), PADDING, recentStartY, COLS, BLOCK_WIDTH);
         } else {
             const listsStartY = HEADER_HEIGHT;
             const bestStartX = PADDING;
             const gridWidth = (BLOCK_WIDTH * COLS) + (PADDING * (COLS - 1));
             const recentStartX = PADDING + gridWidth + CENTER_GAP;
-            renderSongList("BEST", songsWithImages.slice(0, bestList.length), bestStartX, listsStartY, COLS, BLOCK_WIDTH);
-            renderSongList("NEW", songsWithImages.slice(bestList.length), recentStartX, listsStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("BEST", songsWithImages.slice(0, bestList.length), PADDING, bestStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("NEW", songsWithImages.slice(bestList.length), PADDING, recentStartY, COLS, BLOCK_WIDTH);
         }
 
         const footerFontSize = 40; 
