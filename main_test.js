@@ -19,7 +19,7 @@
     const URL_RANKING_ULTIMA_SEND = URL_RANKING_DETAIL + "sendRankingUltima/";
     const URL_RANKING_EXPERT_SEND = URL_RANKING_DETAIL + "sendRankingExpert/";
 
-    const PARALLEL_LIMIT = 3; // 同時処理数
+    const PARALLEL_LIMIT = 2; // 同時処理数
 
     let isAborted = false;
 
@@ -171,14 +171,14 @@
             };
             
             const parallelText = document.createElement('span');
-            parallelText.innerHTML = '⚡ <strong>並列処理を有効化</strong> (最大3件同時取得で高速化)';
+            parallelText.innerHTML = '<strong>並列処理を有効化</strong> (高速化)';
             
             parallelLabel.appendChild(parallelCheckbox);
             parallelLabel.appendChild(parallelText);
             parallelSection.appendChild(parallelLabel);
             
             const parallelInfo = document.createElement('p');
-            parallelInfo.innerHTML = '💡 通常の3倍速で取得します。サーバー負荷が気になる場合はOFFにしてください';
+            parallelInfo.innerHTML = '2倍速で取得します。サーバー負荷が気になる場合はOFFにしてください';
             parallelInfo.style.cssText = 'font-size: 13px; color: #81D4FA; margin-top: 10px; margin-bottom: 0;';
             parallelSection.appendChild(parallelInfo);
             
