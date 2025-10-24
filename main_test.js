@@ -608,13 +608,19 @@
     const executeInParallel = async (tasks, limit, onProgress, batchDelay = 0) => {
         const results = [];
         let completed = 0;
-        let index = 0;
-
-        const executeTask = async () => {
-            while (index < tasks.length && !isAborted) {
-                const currentIndex = index++;
-                const task = tasks[currentIndex];
-                
+        let batchCount = 0;
+    
+        for (let i = 0; i < tasks.length; i += limit) {
+            if (isAborted) break;
+            
+            // バッチの先頭でディレイ（最初のバッチは除く）
+            if (batchCount > 0 && batchDelay > 0) {
+                await new Promise(resolve => setTimeout(resolve, batchDelay * 1000));
+            }
+            
+            const batch = tasks.slice(i, i + limit);
+            const batchPromises = batch.map(async (task, batchIndex) => {
+                const currentIndex = i + batchIndex;
                 try {
                     const result = await task();
                     results[currentIndex] = result;
@@ -627,22 +633,15 @@
                 if (onProgress) {
                     onProgress(completed, tasks.length);
                 }
-                
-                // バッチ完了時のディレイ
-                if (completed % limit === 0 && batchDelay > 0 && index < tasks.length) {
-                    await new Promise(resolve => setTimeout(resolve, batchDelay * 1000));
-                }
-            }
-        };
-
-        const workers = Array(Math.min(limit, tasks.length))
-            .fill(null)
-            .map(() => executeTask());
-
-        await Promise.all(workers);
+            });
+            
+            await Promise.all(batchPromises);
+            batchCount++;
+        }
+    
         return results;
     };
-
+    
     const fetchAllSongsForFreeUser = async (bestConstThreshold, newConstThreshold, delay, constData, useParallel) => {
         updateMessage("ランキングページにアクセス中...", 5);
         const token = document.cookie.split('; ').find(row => row.startsWith('_t=')).split('=')[1];
