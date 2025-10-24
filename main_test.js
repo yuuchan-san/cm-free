@@ -1233,8 +1233,8 @@
             const bestStartX = PADDING;
             const gridWidth = (BLOCK_WIDTH * COLS) + (PADDING * (COLS - 1));
             const recentStartX = PADDING + gridWidth + CENTER_GAP;
-            await renderSongList("BEST", songsWithImages.slice(0, bestList.length), PADDING, bestStartY, COLS, BLOCK_WIDTH);
-            await renderSongList("NEW", songsWithImages.slice(bestList.length), PADDING, recentStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("BEST", songsWithImages.slice(0, bestList.length), bestStartX, listsStartY, COLS, BLOCK_WIDTH);
+            await renderSongList("NEW", songsWithImages.slice(bestList.length), recentStartX, listsStartY, COLS, BLOCK_WIDTH);
         }
 
         const footerFontSize = 40; 
