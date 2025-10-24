@@ -1007,15 +1007,16 @@
         updateMessage("ジャケット画像を読み込み中...");
         const allSongs = [...bestList, ...recentList];
         
-        // 画像を個別に読み込む（元のsongオブジェクトを保持）
-        const loadSongImage = async (song) => {
+        // 画像を個別に読み込む(元のsongオブジェクトを保持)
+        const loadSongImage = async (song, uniqueIndex) => {
             if (!song.jacketUrl) {
                 return { ...song, image: null };
             }
             
             try {
-                // 譜面ごとにユニークなキャッシュバスターを追加
-                const uniqueUrl = `${song.jacketUrl.replace('http://', 'https://')}?d=${song.difficulty}&t=${Date.now()}&r=${Math.random()}`;
+                // 各曲に完全にユニークなキャッシュバスターを追加（インデックス、タイトル、難易度を含む）
+                const uniqueId = `${uniqueIndex}_${song.title}_${song.difficulty}_${Date.now()}_${Math.random()}`;
+                const uniqueUrl = `${song.jacketUrl.replace('http://', 'https://')}?id=${encodeURIComponent(uniqueId)}`;
                 const img = await loadImage(uniqueUrl);
                 return { ...song, image: img };
             } catch (error) {
@@ -1026,8 +1027,8 @@
             
         // 新しいコード
         const songsWithImages = [];
-        for (const song of allSongs) {
-            const songWithImage = await loadSongImage(song);
+        for (let i = 0; i < allSongs.length; i++) {
+            const songWithImage = await loadSongImage(allSongs[i], i);
             songsWithImages.push(songWithImage);
         }
 
