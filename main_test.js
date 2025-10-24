@@ -1014,10 +1014,12 @@
             }
             
             try {
-                const img = await loadImage(song.jacketUrl.replace('http://', 'https://'));
+                // 譜面ごとにユニークなキャッシュバスターを追加
+                const uniqueUrl = `${song.jacketUrl.replace('http://', 'https://')}?d=${song.difficulty}&t=${Date.now()}&r=${Math.random()}`;
+                const img = await loadImage(uniqueUrl);
                 return { ...song, image: img };
             } catch (error) {
-                console.warn(`ジャケット画像読み込み失敗: ${song.title}`, error);
+                console.warn(`ジャケット画像読み込み失敗: ${song.title} [${song.difficulty}]`, error);
                 return { ...song, image: null };
             }
         };
